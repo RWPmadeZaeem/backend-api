@@ -15,7 +15,7 @@ app = FastAPI(title="Flood Prediction API")
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Your Next.js app URL
+    allow_origins=["http://localhost:3000"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -28,12 +28,12 @@ MODEL_PATH = "../ml_models/regressor.pkl"
 SCALER_X_PATH = "ml_models/scaler_x.pkl"
 SCALER_Y_PATH = "ml_models/scaler_y.pkl"
 
-# Dummy thresholds for risk assessment (can be calibrated with historical data)
+# Dummy thresholds for risk assessment
 THRESHOLDS = {
-    "low": 0.3,      # Discharge difference below 0.3 is low risk
-    "medium": 0.6,   # Discharge difference between 0.3 and 0.6 is medium risk
-    "high": 0.9,     # Discharge difference between 0.6 and 0.9 is high risk
-    "severe": 1.0    # Discharge difference above 0.9 is severe risk
+    "low": 0.3,      
+    "medium": 0.6,   
+    "high": 0.9,     
+    "severe": 1.0   
 }
 
 # Model and scalers
@@ -79,7 +79,7 @@ def shift_input(X_scaled, y_scaled, days_intake_length, forecast_day=0):
     return X_train, y_train
 
 def get_risk_level(discharge_value):
-    """Determine risk level based on discharge value"""
+    
     if discharge_value < THRESHOLDS["low"]:
         return "Low"
     elif discharge_value < THRESHOLDS["medium"]:
@@ -110,7 +110,7 @@ async def startup_event():
         
         print("Model loaded successfully")
         
-        # If scalers don't exist, print a warning
+        
         if scaler_x is None or scaler_y is None:
             print("Warning: Scalers not found. Make sure to provide them or handle data normalization manually.")
     except Exception as e:
@@ -124,9 +124,7 @@ async def root():
 
 @app.post("/predict", response_model=PredictionResponse)
 async def predict():
-    """
-    Endpoint to make flood predictions using the preloaded dataset features_xy_2.nc.
-    """
+    
     global model, scaler_x, scaler_y
 
     if model is None:
@@ -191,5 +189,5 @@ async def predict():
 
 @app.get("/thresholds", response_model=Dict[str, float])
 async def get_thresholds():
-    """Return the current threshold values"""
+    
     return THRESHOLDS
